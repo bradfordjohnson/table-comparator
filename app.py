@@ -19,7 +19,7 @@ ui.page_opts(
     page_fn=partial(page_navbar, id="page"),
 )
 
-with ui.nav_panel("Field Similarity"):
+with ui.nav_panel("Field Name Similarity"):
     with ui.layout_columns():
         with ui.card():
             ui.card_header("Upload data files to compare")
