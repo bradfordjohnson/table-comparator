@@ -88,7 +88,11 @@ with ui.nav_panel("Field Name Similarity"):
     @reactive.event(input.file_)
     def display_fields():
         fields = file_content()
-
+    
+    # need to fix this part of the code
+    # right now it will only show the first dataset dict
+    # need to iterate through the dict and display all datasets
+    # when more than 2 datasets are uploaded
         with ui.layout_columns():
             for outer_key in fields.keys():
                 with ui.layout_columns():
