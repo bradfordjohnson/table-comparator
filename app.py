@@ -25,38 +25,37 @@ with ui.nav_panel("Field Similarity"):
             ui.card_header("Upload data files to compare")
             ui.p("Body text")
             (ui.input_slider("field_slider", "Max similar fields to return", 1, 5, 2),)
-            ui.input_file("file_", "Upload datasets", accept=[
-                ".csv", ".json"], multiple=True)
+            ui.input_file(
+                "file_", "Upload datasets", accept=[".csv", ".json"], multiple=True
+            )
 
-# can make use of for loops to iterate and
-# display multiple ui elements
-#
-# thinking of doing this after files are uploaded
-# make 2 columns, one for each file, and display the
-# fields of each file in the respective columns
-#
-# from here I can add the analytics and comparison
-# functions to compare the fields of the files
+    # can make use of for loops to iterate and
+    # display multiple ui elements
+    #
+    # thinking of doing this after files are uploaded
+    # make 2 columns, one for each file, and display the
+    # fields of each file in the respective columns
+    #
+    # from here I can add the analytics and comparison
+    # functions to compare the fields of the files
 
-
-# file_infos is a list of dicts; each dict represents one file. Example:
-# [
-#   {
-#     'name': 'data.csv',
-#     'size': 2601,
-#     'type': 'text/csv',
-#     'datapath': '/tmp/fileupload-1wnx_7c2/tmpga4x9mps/0.csv'
-#   }
-# ]
+    # file_infos is a list of dicts; each dict represents one file. Example:
+    # [
+    #   {
+    #     'name': 'data.csv',
+    #     'size': 2601,
+    #     'type': 'text/csv',
+    #     'datapath': '/tmp/fileupload-1wnx_7c2/tmpga4x9mps/0.csv'
+    #   }
+    # ]
 
     def show_warning():
         ui.notification_show(
-        f"Please upload more than one dataset at a time",
-        type="warning",
-        duration=4,
-    )
-    
-    @render.text
+            f"Please upload more than one dataset at a time",
+            type="warning",
+            duration=4,
+        )
+
     def file_content():
         file_infos = input.file_()
         if not file_infos:
@@ -84,3 +83,22 @@ with ui.nav_panel("Field Similarity"):
             return show_warning()
 
         return get_similar_fields(fields_dict, input.field_slider())
+
+    @render.express
+    @reactive.event(input.file_)
+    def display_fields():
+        fields = file_content()
+
+        with ui.layout_columns():
+            for outer_key in fields.keys():
+                with ui.layout_columns():
+                    with ui.card():
+                        ui.card_header(f"{outer_key}")
+                        with ui.layout_column_wrap(width=1 / 2):
+                            for inner_key in fields[outer_key].keys():
+                                with ui.card():
+                                    ui.card_header(inner_key)
+                                    for dict_item in fields[outer_key][inner_key]:
+                                        for key in dict_item.keys():
+                                            items = dict_item[key]
+                                            ui.markdown(f"{key}: {items}")
