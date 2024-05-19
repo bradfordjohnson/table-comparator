@@ -1,6 +1,7 @@
 from shiny.ui import page_navbar
-from functools import partial
+from shiny import reactive
 from shiny.express import ui, input, render
+from functools import partial
 from helpers import get_similar_fields
 import mimetypes
 from typing import List
@@ -48,7 +49,13 @@ with ui.nav_panel("Field Similarity"):
 #   }
 # ]
 
-
+    def show_warning():
+        ui.notification_show(
+        f"Please upload more than one dataset at a time",
+        type="warning",
+        duration=4,
+    )
+    
     @render.text
     def file_content():
         file_infos = input.file_()
@@ -74,6 +81,6 @@ with ui.nav_panel("Field Similarity"):
                             all_keys.update(item.keys())
                         fields_dict[file_info["name"]] = list(all_keys)
         if len(fields_dict) == 1:
-            return "Please upload more than one dataset at a time"
+            return show_warning()
 
         return get_similar_fields(fields_dict, input.field_slider())
